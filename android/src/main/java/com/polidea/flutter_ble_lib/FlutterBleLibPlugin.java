@@ -1,6 +1,11 @@
 package com.polidea.flutter_ble_lib;
 
+import android.Manifest;
+import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
@@ -28,10 +33,14 @@ import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -124,11 +133,17 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         }
     }
 
-    private void isClientCreated(Result result) {
-        result.success(bleAdapter != null);
+    private void isClientCreated(final Result result) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                result.success(bleAdapter != null);
+            }
+        });
+
     }
 
-    private void createClient(MethodCall call, Result result) {
+    private void createClient(MethodCall call, final Result result) {
         if (bleAdapter != null) {
             Log.w(TAG, "Overwriting existing native client. Use BleManager#isClientCreated to check whether a client already exists.");
         }
@@ -145,10 +160,15 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         restoreStateStreamHandler.onRestoreEvent(restoreStateIdentifier);
                     }
                 });
-        result.success(null);
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                result.success(null);
+            }
+        });
     }
 
-    private void destroyClient(Result result) {
+    private void destroyClient(final Result result) {
         if (bleAdapter != null) {
             bleAdapter.destroyClient();
         }
@@ -156,10 +176,16 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         connectionStateStreamHandler.onComplete();
         bleAdapter = null;
         delegates.clear();
-        result.success(null);
+
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                result.success(null);
+            }
+        });
     }
 
-    private void startDeviceScan(@NonNull MethodCall call, Result result) {
+    private void startDeviceScan(@NonNull MethodCall call, final Result result) {
         List<String> uuids = call.<List<String>>argument(ArgumentKey.UUIDS);
         bleAdapter.startDeviceScan(uuids.toArray(new String[uuids.size()]),
                 call.<Integer>argument(ArgumentKey.SCAN_MODE),
@@ -171,25 +197,52 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                     }
                 }, new OnErrorCallback() {
                     @Override
-                    public void onError(BleError error) {
-                        scanningStreamHandler.onError(error);
+                    public void onError(final BleError error) {
+                        runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                scanningStreamHandler.onError(error);
+                            }
+                        });
+
                     }
                 });
-        result.success(null);
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                result.success(null);
+            }
+        });
     }
 
-    private void stopDeviceScan(Result result) {
+    private void stopDeviceScan(final Result result) {
         if (bleAdapter != null) {
             bleAdapter.stopDeviceScan();
         }
-        scanningStreamHandler.onComplete();
-        result.success(null);
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                scanningStreamHandler.onComplete();
+                result.success(null);
+            }
+        });
     }
 
-    private void cancelTransaction(MethodCall call, Result result) {
+    private void cancelTransaction(MethodCall call, final Result result) {
         if (bleAdapter != null) {
             bleAdapter.cancelTransaction(call.<String>argument(ArgumentKey.TRANSACTION_ID));
         }
-        result.success(null);
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                result.success(null);
+            }
+        });
+
     }
+
+    private void runOnUIThread(Runnable runnable){
+        new Handler(Looper.getMainLooper()).post(runnable);
+    }
+
 }
