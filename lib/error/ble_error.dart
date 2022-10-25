@@ -41,6 +41,7 @@ class BleError {
   @override
   String toString() => "BleError ("
       "Error code: ${errorCode.value}, "
+      "Error message: $_bleErrorMessage, "
       "ATT error code: $attErrorCode, "
       "iOS error code: $iosErrorCode, "
       "Android error code: $androidErrorCode, "
@@ -50,6 +51,17 @@ class BleError {
       "service UUID: $serviceUuid, "
       "characteristic UUID: $characteristicUuid, "
       "descriptor UUID: $descriptorUuid)";
+
+  String? get _bleErrorMessage {
+    String? bleErrorMessage = bleErrorCodesToMessageMap[errorCode.value] ?? '';
+    bleErrorMessage = bleErrorMessage
+        .replaceAll('{deviceID}', deviceID ?? '')
+        .replaceAll('{serviceUUID}', serviceUuid ?? '')
+        .replaceAll('{descriptorUUID}', descriptorUuid ?? '')
+        .replaceAll('{internalMessage}', internalMessage ?? '')
+        .replaceAll('{characteristicUUID}', characteristicUuid ?? '');
+    return bleErrorMessage;
+  }
 }
 
 class BleErrorCode {

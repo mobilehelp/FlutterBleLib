@@ -5,6 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 
     dependencies {
@@ -36,5 +37,6 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.github.resideo:MultiPlatformBleAdapter:master-SNAPSHOT'
+    // implementation 'com.github.resideo:MultiPlatformBleAdapter:feature~android-create-bond-SNAPSHOT'
+    implementation 'com.github.resideo:MultiPlatformBleAdapter:feature~android-12-SNAPSHOT'
 }
