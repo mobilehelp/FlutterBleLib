@@ -31,6 +31,12 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
+  Future<bool> createBond(
+    Peripheral peripheral,
+    String? serviceUuid,
+    String transactionId,
+  );
+
   Future<List<Service>> services(Peripheral peripheral);
 
   Future<List<Characteristic>> characteristics(

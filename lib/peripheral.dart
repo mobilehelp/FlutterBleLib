@@ -91,6 +91,17 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Android only: create bond
+  Future<bool> createBond({
+    String? serviceUuid,
+    String? transactionId,
+  }) =>
+      _manager.createBond(
+        this,
+        serviceUuid,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
+
   /// Returns a list of [Service]s of this peripheral.
   ///
   /// Will result in error if discovery was not done during this connection.

@@ -28,6 +28,8 @@ abstract class MethodName {
   static const String descriptorsForCharacteristic =
       "descriptorsForCharacteristic";
 
+  static const String createBond = "createBond";
+
   static const String setLogLevel = "setLogLevel";
   static const String logLevel = "logLevel";
 
@@ -76,6 +78,7 @@ abstract class MethodName {
 abstract class ChannelName {
   static const String flutterBleLib = "flutter_ble_lib";
   static const String adapterStateChanges = flutterBleLib + "/stateChanges";
+  static const String bondStateChanges = flutterBleLib + "/bondStateChanges";
   static const String stateRestoreEvents =
       flutterBleLib + "/stateRestoreEvents";
   static const String scanningEvents = flutterBleLib + "/scanningEvents";

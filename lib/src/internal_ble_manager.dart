@@ -178,6 +178,18 @@ class InternalBleManager
       );
 
   @override
+  Future<bool> createBond(
+    Peripheral peripheral,
+    String? serviceUuid,
+    String transactionId,
+  ) =>
+      _bleLib.createBond(
+        peripheral,
+        serviceUuid,
+        transactionId,
+      );
+
+  @override
   Future<List<Characteristic>> characteristicsForService(Service service) =>
       _bleLib.characteristicsForService(service);
 

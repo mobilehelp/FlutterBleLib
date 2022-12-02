@@ -20,6 +20,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +29,7 @@ import androidx.annotation.NonNull;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class DiscoveryDelegate extends CallDelegate {
+public class DiscoveryDelegate extends CallDelegate implements Serializable {
     private BleAdapter adapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
     private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
@@ -44,7 +45,9 @@ public class DiscoveryDelegate extends CallDelegate {
 
             MethodName.GET_DESCRIPTORS_FOR_CHARACTERISTIC,
             MethodName.GET_DESCRIPTORS_FOR_SERVICE,
-            MethodName.GET_DESCRIPTORS_FOR_DEVICE
+            MethodName.GET_DESCRIPTORS_FOR_DEVICE,
+
+            MethodName.CREATE_BOND
     );
 
     public DiscoveryDelegate(BleAdapter adapter) {
@@ -97,6 +100,12 @@ public class DiscoveryDelegate extends CallDelegate {
                         call.<String>argument(ArgumentKey.CHARACTERISTIC_UUID),
                         result
                 );
+                return;
+            case MethodName.CREATE_BOND:
+                createBond(
+                        call.<String>argument(ArgumentKey.DEVICE_IDENTIFIER),
+                        call.<String>argument(ArgumentKey.TRANSACTION_ID),
+                        result);
                 return;
             default:
                 throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
@@ -231,6 +240,35 @@ public class DiscoveryDelegate extends CallDelegate {
             e.printStackTrace();
             result.error(null, e.getMessage(), null);
         }
+    }
+
+    private void createBond(String deviceId, String transactionId, final MethodChannel.Result result) {
+        final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
+        new OnSuccessCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean data) {
+                result.success(data);
+            }
+        },
+        new OnErrorCallback() {
+            @Override
+            public void onError(BleError error) {
+                failWithError(result, error);
+            }
+                });
+
+        adapter.createBondForDevice(deviceId, transactionId,
+                new OnSuccessCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean data) {
+                        resolver.onSuccess(data);
+                    }
+                }, new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        resolver.onError(error);
+                    }
+                });
     }
 
     private void failWithError(MethodChannel.Result result, BleError error) {

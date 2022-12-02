@@ -28,6 +28,8 @@ public interface MethodName {
     String GET_DESCRIPTORS_FOR_CHARACTERISTIC = "descriptorsForCharacteristic";
     String GET_DESCRIPTORS_FOR_SERVICE = "descriptorsForService";
 
+    String CREATE_BOND = "createBond";
+
     String LOG_LEVEL = "logLevel";
     String SET_LOG_LEVEL = "setLogLevel";
 

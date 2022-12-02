@@ -65,11 +65,15 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
 
-        final EventChannel bluetoothStateChannel = new EventChannel(registrar.messenger(), ChannelName.ADAPTER_STATE_CHANGES);
-        final EventChannel restoreStateChannel = new EventChannel(registrar.messenger(), ChannelName.STATE_RESTORE_EVENTS);
+        final EventChannel bluetoothStateChannel = new EventChannel(registrar.messenger(),
+                ChannelName.ADAPTER_STATE_CHANGES);
+        final EventChannel restoreStateChannel = new EventChannel(registrar.messenger(),
+                ChannelName.STATE_RESTORE_EVENTS);
         final EventChannel scanningChannel = new EventChannel(registrar.messenger(), ChannelName.SCANNING_EVENTS);
-        final EventChannel connectionStateChannel = new EventChannel(registrar.messenger(), ChannelName.CONNECTION_STATE_CHANGE_EVENTS);
-        final EventChannel characteristicMonitorChannel = new EventChannel(registrar.messenger(), ChannelName.MONITOR_CHARACTERISTIC);
+        final EventChannel connectionStateChannel = new EventChannel(registrar.messenger(),
+                ChannelName.CONNECTION_STATE_CHANGE_EVENTS);
+        final EventChannel characteristicMonitorChannel = new EventChannel(registrar.messenger(),
+                ChannelName.MONITOR_CHARACTERISTIC);
 
         final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.context());
 
@@ -145,7 +149,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void createClient(MethodCall call, final Result result) {
         if (bleAdapter != null) {
-            Log.w(TAG, "Overwriting existing native client. Use BleManager#isClientCreated to check whether a client already exists.");
+            Log.w(TAG,
+                    "Overwriting existing native client. Use BleManager#isClientCreated to check whether a client already exists.");
         }
         setupAdapter(context);
         bleAdapter.createClient(call.<String>argument(ArgumentKey.RESTORE_STATE_IDENTIFIER),
@@ -241,7 +246,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     }
 
-    private void runOnUIThread(Runnable runnable){
+    private void runOnUIThread(Runnable runnable) {
         new Handler(Looper.getMainLooper()).post(runnable);
     }
 
